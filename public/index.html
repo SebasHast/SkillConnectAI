@@ -523,25 +523,32 @@
 
         <div class="form-group">
           <label>Nombre del paciente</label>
-          <input type="text" id="inp-nombre" placeholder="Ej: Ana Martínez">
+          <input type="text" id="inp-nombre" placeholder="Nombre Completo">
         </div>
 
-        <div class="form-group">
-          <label>Fecha de la cita</label>
-          <input type="date" id="inp-fecha">
-        </div>
+<div class="form-group">
+<label>Describe tu diagnóstico</label>
+<input type="text" id="inp-diagnostico" placeholder="Ej: dolor de pecho, ansiedad, caída del cabello">
+</div>
+<div class="form-group">
+<button class="btn btn-primary" type="button" onclick="recomendarEspecialista()"><span>Recomendar Especialista</span></button>
+</div>
+<div class="form-group">
+<label>Especialista sugerido</label>
+<select id="inp-profesion">
+<option value=''>Analiza primero</option>
+</select>
+</div>
+<div class="form-group">
+<label>Fecha de la cita</label>
+<select id="inp-fecha">
+<option value="">Selecciona fecha</option>
+</select>
 
-        <div class="form-group">
-          <label>Tipo de profesional</label>
-          <select id="inp-profesion">
-            <option value="">— Seleccionar —</option>
-            <option value="Médico General">👨‍⚕️ Médico General</option>
-            <option value="Psicólogo">🧠 Psicólogo</option>
-            <option value="Nutricionista">🥗 Nutricionista</option>
-            <option value="Fisioterapeuta">💪 Fisioterapeuta</option>
-            <option value="Dermatólogo">✨ Dermatólogo</option>
-          </select>
-        </div>
+<select id="inp-hora" style="margin-top:10px">
+<option value="">Selecciona hora</option>
+</select>
+</div>
 
         <button class="btn btn-primary" id="btn-agregar" onclick="agregarCita()">
           <span>Agregar Cita</span>
@@ -584,7 +591,273 @@ const PROFESIONES = {
   'Fisioterapeuta':   { emoji: '💪', class: 'fisioterapeuta' },
   'Dermatólogo':      { emoji: '✨', class: 'dermatologo' },
 };
+// Especialistas por palabras clave
+const ESPECIALISTAS = {
 
+'Cardiología': [
+'pecho',
+'dolor pecho',
+'corazon',
+'palpitaciones',
+'taquicardia',
+'arritmia',
+'presion alta',
+'hipertension',
+'presion baja',
+'falta aire',
+'opresion pecho',
+'latidos',
+'cardiaco',
+'angina'
+],
+
+'Dermatología': [
+'piel',
+'acne',
+'cabello',
+'uñas',
+'manchas',
+'ronchas',
+'dermatitis',
+'picazon',
+'caida cabello',
+'eczema',
+'sarpullido',
+'alergia piel',
+'irritacion',
+'resequedad'
+],
+
+'Endocrinología': [
+'diabetes',
+'azucar',
+'glucosa',
+'tiroides',
+'hipotiroidismo',
+'hipertiroidismo',
+'hormonas',
+'metabolismo',
+'aumento peso',
+'perdida peso',
+'insulina',
+'fatiga hormonal',
+'obesidad',
+'endocrino'
+],
+
+'Neurología': [
+'migraña',
+'convulsion',
+'dolor cabeza',
+'cefalea',
+'mareo',
+'memoria',
+'temblores',
+'desmayo',
+'entumecimiento',
+'neurologico',
+'nervios',
+'vertigo',
+'coordinacion',
+'epilepsia'
+],
+
+'Medicina Interna': [
+'fatiga',
+'fiebre',
+'gripe',
+'tos',
+'dolor general',
+'malestar',
+'debilidad',
+'presion levemente alta',
+'dolor cabeza leve',
+'estres',
+'cansancio',
+'control medico',
+'chequeo',
+'seguimiento',
+'resfriado',
+'dolor muscular',
+'dolor estomacal leve',
+'mareo leve',
+'ansiedad leve',
+'alergia leve',
+'infeccion leve',
+'sintomas generales'
+],
+
+'Pediatría': [
+'niño',
+'bebe',
+'adolescente',
+'fiebre infantil',
+'tos infantil',
+'vacunas',
+'crecimiento',
+'dolor infantil',
+'control pediatrico',
+'alimentacion infantil',
+'desarrollo',
+'guarderia',
+'pediatra',
+'menor edad'
+],
+
+'Ortopedia y Traumatología': [
+'fractura',
+'rodilla',
+'espalda',
+'hueso',
+'articulacion',
+'ligamento',
+'tobillo',
+'dolor muscular',
+'lesion',
+'columna',
+'hombro',
+'codo',
+'tendinitis',
+'esguince'
+],
+
+'Urología': [
+'orina',
+'riñon',
+'prostata',
+'infeccion urinaria',
+'ardor orinar',
+'retencion',
+'sangre orina',
+'urinario',
+'vejiga',
+'calculo renal',
+'dolor lumbar',
+'impotencia',
+'frecuencia urinaria',
+'urologico'
+],
+
+'Ginecobstetricia': [
+'embarazo',
+'menstrual',
+'ginecologia',
+'parto',
+'fertilidad',
+'ovarios',
+'colicos',
+'flujo',
+'ciclo',
+'gestacion',
+'dolor pelvico',
+'anticonceptivos',
+'endometriosis',
+'ginecologico'
+],
+
+'Gastroenterología': [
+'estomago',
+'digestivo',
+'colon',
+'dolor abdominal',
+'gastritis',
+'reflujo',
+'nauseas',
+'vomito',
+'diarrea',
+'estreñimiento',
+'higado',
+'intestino',
+'acidez',
+'digestión',
+'páncreas',
+'úlcera',
+'apendicitis',
+'colitis',
+'hepatitis',
+'gastrointestinal'
+],
+
+'Psiquiatría': [
+'ansiedad',
+'depresion',
+'insomnio',
+'estres',
+'panico',
+'tristeza',
+'trastorno',
+'obsesiones',
+'emocional',
+'cambio humor',
+'crisis',
+'mental',
+'conducta',
+'agotamiento emocional',
+'psiquiatrico',
+'salud mental',
+'psicologico',
+'psicoterapia',
+'psiquiatra'
+]
+};
+const DISPONIBILIDAD = {
+
+'Cardiología': {
+fechas:['2026-05-20','2026-05-22'],
+horas:['08:00','09:30','11:00']
+},
+
+'Dermatología':{
+fechas:['2026-05-21','2026-05-23'],
+horas:['10:00','14:00','16:30']
+},
+
+'Endocrinología':{
+fechas:['2026-05-20','2026-05-26'],
+horas:['08:30','13:00','15:00']
+},
+
+'Neurología':{
+fechas:['2026-05-24','2026-05-28'],
+horas:['09:00','11:30','15:30']
+},
+
+'Medicina Interna':{
+fechas:['2026-05-20','2026-05-21','2026-05-22'],
+horas:['08:00','10:00','12:00','15:00']
+},
+
+'Pediatría':{
+fechas:['2026-05-21','2026-05-23'],
+horas:['09:00','10:30','14:00']
+},
+
+'Ortopedia y Traumatología':{
+fechas:['2026-05-22','2026-05-27'],
+horas:['08:30','11:00','16:00']
+},
+
+'Urología':{
+fechas:['2026-05-25','2026-05-29'],
+horas:['10:00','13:00','15:30']
+},
+
+'Ginecobstetricia':{
+fechas:['2026-05-20','2026-05-24'],
+horas:['09:00','12:00','16:00']
+},
+
+'Gastroenterología':{
+fechas:['2026-05-22','2026-05-26'],
+horas:['08:00','11:00','14:30']
+},
+
+'Psiquiatría':{
+fechas:['2026-05-20','2026-05-23'],
+horas:['09:00','10:00','13:00','17:00']
+}
+
+};
 // Sugerencias por profesión
 const SUGERENCIAS = {
   'Médico General': [
@@ -622,8 +895,92 @@ const SUGERENCIAS = {
 let citas = [];
 
 // ── Utilities ──────────────────────────────────────
+function recomendarEspecialista() {
+
+  const diagnostico =
+    document.getElementById('inp-diagnostico')
+    .value
+    .trim()
+    .toLowerCase();
+
+  const selector =
+    document.getElementById('inp-profesion');
+
+  if (!diagnostico) {
+    showToast(
+      'Describe primero el diagnóstico.',
+      'error'
+    );
+    return;
+  }
+
+  let resultado =
+    'Medicina Interna';
+
+  for (
+    const [especialidad, palabras]
+    of Object.entries(ESPECIALISTAS)
+  ) {
+
+    if (
+      palabras.some(
+        p => diagnostico.includes(p)
+      )
+    ) {
+
+      resultado =
+        especialidad;
+
+      break;
+    }
+  }
+
+  selector.innerHTML = `
+    <option value="${resultado}">
+      ${resultado}
+    </option>
+  `;
+
+  selector.value =
+    resultado;
+
+  // ← AGREGA ESTA LÍNEA
+  cargarDisponibilidad(resultado);
+
+  showToast(
+    `Especialista recomendado: ${resultado}`
+  );
+}
 function getProf(nombre) {
   return PROFESIONES[nombre] || { emoji: '🩺', class: 'general' };
+}
+function cargarDisponibilidad(especialidad){
+
+const fechas=document.getElementById('inp-fecha');
+const horas=document.getElementById('inp-hora');
+
+fechas.innerHTML='';
+horas.innerHTML='';
+
+const data=
+DISPONIBILIDAD[especialidad];
+
+if(!data)return;
+
+data.fechas.forEach(f=>{
+fechas.innerHTML+=
+`<option value="${f}">
+${f}
+</option>`;
+});
+
+data.horas.forEach(h=>{
+horas.innerHTML+=
+`<option value="${h}">
+${h}
+</option>`;
+});
+
 }
 
 function showToast(msg, type = 'success') {
@@ -707,10 +1064,12 @@ async function cargarCitas() {
 // ── Add ────────────────────────────────────────────
 async function agregarCita() {
   const nombre = document.getElementById('inp-nombre').value.trim();
+  const diagnostico = document.getElementById('inp-diagnostico').value.trim();
   const fecha = document.getElementById('inp-fecha').value;
+  const hora = document.getElementById('inp-hora').value;
   const profesion = document.getElementById('inp-profesion').value;
 
-  if (!nombre || !fecha || !profesion) {
+  if (!nombre || !diagnostico || !fecha || !hora || !profesion) {
     showToast('Completa todos los campos antes de continuar.', 'error');
     return;
   }
@@ -723,7 +1082,13 @@ async function agregarCita() {
     const r = await fetch(API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, fecha, profesion }),
+      body: JSON.stringify({
+      nombre,
+      diagnostico,
+      fecha,
+      hora, 
+      profesion
+    }),
     });
 
     if (!r.ok) throw new Error();
